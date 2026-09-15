@@ -1,0 +1,249 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-09-15T19:40:00.000Z",
+  "resources": [
+    {
+      "_id": "wrk_security_lab",
+      "parentId": null,
+      "_type": "workspace",
+      "scope": "collection",
+      "name": "Security Lab (JWT)",
+      "description": "Lab: register -> login -> protected endpoints and user-to-user messaging via Bearer JWT"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_security_lab",
+      "_type": "environment",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080"
+      }
+    },
+    {
+      "_id": "req_register_alice",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "Register (alice)",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/register",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1,
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"login\": \"alice\",\n  \"password\": \"alicepass\",\n  \"repeatedPassword\": \"alicepass\"\n}"
+      },
+      "description": "200 + token. 409 if the login is taken, 400 if the passwords do not match."
+    },
+    {
+      "_id": "req_register_bob",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "Register (bob)",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/register",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 2,
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"login\": \"bob\",\n  \"password\": \"bobpass\",\n  \"repeatedPassword\": \"bobpass\"\n}"
+      },
+      "description": "Second user to exchange messages with."
+    },
+    {
+      "_id": "req_login_alice",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "Login (alice)",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/login",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3,
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"login\": \"alice\",\n  \"password\": \"alicepass\"\n}"
+      },
+      "description": "200 + token. 401 with wrong credentials."
+    },
+    {
+      "_id": "req_login_bob",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "Login (bob)",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/login",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 4,
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"login\": \"bob\",\n  \"password\": \"bobpass\"\n}"
+      },
+      "description": "Login as bob to check his inbox."
+    },
+    {
+      "_id": "req_data_valid_token",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "GET /api/data (valid token)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/data",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {% response 'body', 'req_login_alice', '$.token', 'raw' %}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 5,
+      "body": {},
+      "description": "List of registered users. Run Login (alice) first: the token is taken from the last login response automatically."
+    },
+    {
+      "_id": "req_data_no_token",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "GET /api/data (no token)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/data",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 6,
+      "body": {},
+      "description": "Expected: 401 + WWW-Authenticate: Bearer."
+    },
+    {
+      "_id": "req_data_bad_token",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "GET /api/data (invalid token)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/data",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer not.a.real.jwt"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 7,
+      "body": {},
+      "description": "Expected: 401 + WWW-Authenticate: Bearer."
+    },
+    {
+      "_id": "req_message_send",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "POST /api/messages (send to bob)",
+      "method": "POST",
+      "url": "{{ base_url }}/api/messages",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {% response 'body', 'req_login_alice', '$.token', 'raw' %}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 8,
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"recipient\": \"bob\",\n  \"text\": \"hi bob, this is alice\"\n}"
+      },
+      "description": "Sends a message from the current user (alice) to bob. 201 + {id, from, to, text, createdAt}. 404 if the recipient does not exist, 400 if fields are blank."
+    },
+    {
+      "_id": "req_message_inbox_bob",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "GET /api/messages (bob inbox)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/messages",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {% response 'body', 'req_login_bob', '$.token', 'raw' %}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 9,
+      "body": {},
+      "description": "All messages sent TO bob, newest first. Uses bob's token - run Login (bob) before this."
+    },
+    {
+      "_id": "req_message_inbox_alice",
+      "parentId": "wrk_security_lab",
+      "_type": "request",
+      "name": "GET /api/messages (alice inbox)",
+      "method": "GET",
+      "url": "{{ base_url }}/api/messages",
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {% response 'body', 'req_login_alice', '$.token', 'raw' %}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 10,
+      "body": {},
+      "description": "All messages sent TO alice, newest first - empty until bob sends her one."
+    }
+  ]
+}
