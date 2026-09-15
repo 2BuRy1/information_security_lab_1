@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Spring constructor injection: storing injected singleton beans in final
+         fields is the framework idiom, not an exposure of internal representation. -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+        <Class name="~com\.security\.lab\.(configuration|service)\..*"/>
+    </Match>
+    <!-- JwtService fails fast in the constructor when the signing secret is
+         shorter than 256 bits - an intentional startup guard, not a defect. -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+        <Class name="com.security.lab.service.JwtService"/>
+    </Match>
+</FindBugsFilter>

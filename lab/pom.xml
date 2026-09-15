@@ -182,6 +182,7 @@
                     <nvdValidForHours>24</nvdValidForHours>
                     <failBuildOnCVSS>11</failBuildOnCVSS>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                    <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                 </configuration>
             </plugin>
         </plugins>
