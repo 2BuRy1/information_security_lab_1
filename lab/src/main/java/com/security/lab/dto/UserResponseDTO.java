@@ -1,3 +1,7 @@
 package com.security.lab.dto;
 
-public record UserResponseDTO(Long id, String login) {}
+import com.security.lab.serializer.XssStringSerializer;
+import tools.jackson.databind.annotation.JsonSerialize;
+
+public record UserResponseDTO(
+        Long id, @JsonSerialize(using = XssStringSerializer.class) String login) {}

@@ -29,6 +29,7 @@
     <properties>
         <java.version>17</java.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <tomcat.version>11.0.26</tomcat.version>
     </properties>
     <dependencies>
         <dependency>
@@ -179,6 +180,9 @@
                         <format>HTML</format>
                         <format>JSON</format>
                     </formats>
+                    <suppressionFiles>
+                        <suppressionFile>${project.basedir}/dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
                     <nvdValidForHours>24</nvdValidForHours>
                     <failBuildOnCVSS>11</failBuildOnCVSS>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://www.owasp.org/index.php/OWASP_Dependency_Check_Suppression https://jeremylong.github.io/DependencyCheck/autoupdate/8.0/suppression.xsd">
+    <suppress>
+        <notes><![CDATA[
+        False positive: angus-activation is the Jakarta Activation (JAF) implementation,
+        not angus_mail (Jakarta Mail). Dependency-Check matches the CPE by name similarity.
+        2.0.3 is the latest release of angus-activation.
+        ]]></notes>
+        <filePath regex="true">.*angus-activation.*\.jar</filePath>
+        <cpe>cpe:/a:eclipse:angus_mail</cpe>
+    </suppress>
+</suppressions>
